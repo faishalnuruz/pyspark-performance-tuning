@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-10-23T22:27:52.154141+00:00",
+  "input": {
+    "activities": "data/activities",
+    "events": "data/events.csv"
+  },
+  "config": {
+    "shuffle_partitions": 8,
+    "salt_buckets": 16,
+    "tolerance": 0.01
+  },
+  "naive": {
+    "label": "naive",
+    "total_seconds": 37.075,
+    "timings": {
+      "read_and_flatten": 25.643,
+      "aggregate": 7.809,
+      "measure_distribution": 3.623
+    },
+    "distributions": {
+      "hash_by_key_8": {
+        "partitions": 5,
+        "rows": 3023500,
+        "min_rows": 81000,
+        "max_rows": 2126000,
+        "median_rows": 216000,
+        "skew_ratio": 9.84
+      }
+    },
+    "notes": [
+      "inferSchema reads the JSON once to guess types, then again to parse it",
+      "spark.sql.shuffle.partitions pinned to 8 so the skew is visible",
+      "3,023,500 telemetry rows flattened into 8 event rows"
+    ]
+  },
+  "optimised": {
+    "label": "optimised",
+    "total_seconds": 33.505,
+    "timings": {
+      "read_and_flatten": 8.354,
+      "aggregate": 3.243,
+      "measure_distribution": 3.987,
+      "write_partitioned": 17.921
+    },
+    "distributions": {
+      "hash_by_key_8": {
+        "partitions": 5,
+        "rows": 3023500,
+        "min_rows": 81000,
+        "max_rows": 2126000,
+        "median_rows": 216000,
+        "skew_ratio": 9.84
+      },
+      "hash_by_key_and_salt_8": {
+        "partitions": 8,
+        "rows": 3023500,
+        "min_rows": 149787,
+        "max_rows": 610160,
+        "median_rows": 351052,
+        "skew_ratio": 1.74
+      }
+    },
+    "notes": [
+      "explicit schema avoids the inference pass and the wrong-guess risk",
+      "dimension broadcast, key salted into 16 buckets, two-stage aggregation",
+      "adaptive query execution enabled",
+      "wrote 54 Parquet files partitioned by year, month, and country",
+      "aggregated 3,023,500 telemetry rows into 8 event rows"
+    ]
+  },
+  "schema_read": {
+    "read_infer_schema": 3.329,
+    "read_explicit_schema": 0.789
+  },
+  "correctness": {
+    "events_compared": 8,
+    "mismatches": [],
+    "identical": true
+  },
+  "skew": {
+    "naive_hash_by_key": {
+      "partitions": 5,
+      "rows": 3023500,
+      "min_rows": 81000,
+      "max_rows": 2126000,
+      "median_rows": 216000,
+      "skew_ratio": 9.84
+    },
+    "optimised_hash_by_key": {
+      "partitions": 5,
+      "rows": 3023500,
+      "min_rows": 81000,
+      "max_rows": 2126000,
+      "median_rows": 216000,
+      "skew_ratio": 9.84
+    },
+    "optimised_hash_by_key_and_salt": {
+      "partitions": 8,
+      "rows": 3023500,
+      "min_rows": 149787,
+      "max_rows": 610160,
+      "median_rows": 351052,
+      "skew_ratio": 1.74
+    }
+  },
+  "pruning": {
+    "layout": {
+      "files": 54,
+      "partition_directories": 6,
+      "matching_files": 54,
+      "sample_directories": [
+        "year=2026/month=10/country=AU",
+        "year=2026/month=10/country=GB",
+        "year=2026/month=10/country=ID",
+        "year=2026/month=10/country=JP",
+        "year=2026/month=10/country=MY",
+        "year=2026/month=10/country=SG"
+      ]
+    },
+    "one_country": {
+      "files": 9,
+      "rows": 484750
+    },
+    "all_rows": 3023500
+  }
+}
