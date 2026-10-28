@@ -1,4 +1,5 @@
 # PySpark Performance Tuning
+[![CI](https://github.com/faishalnuruz/pyspark-performance-tuning/actions/workflows/ci.yml/badge.svg)](https://github.com/faishalnuruz/pyspark-performance-tuning/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A naive PySpark job and an optimised one over the same skewed, nested telemetry — with the
 measurement that proves the difference and the check that proves the answers still match.
