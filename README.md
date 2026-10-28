@@ -80,7 +80,7 @@ run.
 ## Tests
 
 ```bash
-.venv/bin/python -m pytest -q     # 22 passed (~2 min: one JVM for the whole suite)
+.venv/bin/python -m pytest -q     # 22 passed (~2 min on a quiet machine, one JVM for the whole suite)
 .venv/bin/ruff check .
 ```
 
